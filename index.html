@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.2.2/firebase.js"></script>
+
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.js"></script>
+
+    <link rel="stylesheet" href="main.css"/>
+</head>
+<body ng-app="chatApp">
+
+    <ng-view></ng-view>
+
+<script>
+
+    //STEP 1: Add the Firebase module and define application-wide dependencies
+    var app = angular.module("chatApp", ["firebase", "ngRoute"]);
+    app.constant("FBURL", "https://croissants.firebaseio.com/");
+    app.service("Ref", ["FBURL", Firebase]);
+
+    //STEP 2: Set up routes
+    app.config(function($routeProvider) {
+        $routeProvider
+            .when("/", {
+                templateUrl: "views/login.html",
+                controller: "LoginCtrl"
+            })
+            .when("/chat", {
+                templateUrl: "views/chat.html",
+                controller: "ChatCtrl",
+                resolve: {
+                    auth: function(Auth) {
+                        return Auth.$waitForAuth();
+                    },
+                    messages: function(ChatMessages) {
+                        return ChatMessages.$loaded();
+                    }
+                }
+            });
+    });
+
+    //STEP 3: Define factories and services
+    app.factory("ChatMessages", function(Ref, $firebaseArray) {
+        return $firebaseArray(Ref.child('messages'));
+    });
+
+    app.factory("Auth", function(Ref, $firebaseAuth) {
+        return $firebaseAuth(Ref);
+    });
+
+    app.service("Users", function(Ref) {
+        this.save = function(authData) {
+            Ref.child('users').child(authData.uid).set(authData);
+        };
+    });
+
+    //STEP 4: Synchronize data with Firebase in realtime
+    app.controller("LoginCtrl", function($scope, Auth, Users, $window) {
+        $scope.login = function() {
+            Auth.$authWithOAuthPopup('twitter').then(function(authData) {
+                Users.save(authData);
+                $window.location.href = "#/chat";
+            });
+        };
+    });
+
+    app.controller("ChatCtrl", function($scope, auth, messages) {
+        $scope.messages = messages;
+
+        $scope.addMessage = function() {
+            $scope.messages.$add({
+                from: auth.twitter.username,
+                content: $scope.message,
+                timestamp: new Date().getTime()
+            });
+            $scope.message = "";
+        };
+    });
+
+</script>
+</body>
+</html>

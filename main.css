@@ -1,0 +1,57 @@
+body {
+    font-family: 'HelveticaNeue-Light';
+}
+
+.login {
+    padding: 0.5em 1em;
+    background-color: #0273D4;
+    border: none;
+    color: white;
+    font-family: 'HelveticaNeue-Light';
+    font-weight: normal;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 20px;
+    margin: -3px 40px 0px 0px;
+    cursor: pointer;
+}
+
+.chat {
+    text-align: center;
+    margin: 200px 0px 0px 0px;
+}
+
+.msg {
+    list-style-type: none;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.msg-content {
+    font-size: 17px;
+}
+
+.msg-input {
+    padding: 1em;
+    border: 1px solid #ccc;
+    height: 8px;
+    font-size: 14px;
+    font-family: 'HelveticaNeue-Light';
+    border-radius: 3px;
+}
+
+.submit-btn {
+    padding: 0.5em 1em;
+    background-color: #0273D4;
+    border: none;
+    color: #FFF;
+    font-family: 'HelveticaNeue-Light';
+    font-weight: normal;
+    font-size: 16px;
+    border-radius: 5px;
+    height: 38px;
+    margin: 0px 0px 60px 20px;
+}
